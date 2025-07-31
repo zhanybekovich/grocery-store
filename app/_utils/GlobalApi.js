@@ -12,4 +12,7 @@ const getCategory = () => axiosClient.get("/categories?populate=*");
 const getSliders = () =>
   axiosClient.get("/sliders?populate=*").then((res) => res.data.data);
 
-export default { getCategory, getSliders };
+const getCategoryList = () =>
+  axiosClient.get("/categories?populate=*").then((res) => res.data.data);
+
+export default { getCategory, getSliders, getCategoryList };
