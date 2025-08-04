@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Search, ShoppingBag } from "lucide-react";
+import { CircleUserRound, LayoutGrid, Search, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import {
   DropdownMenu,
@@ -13,9 +13,12 @@ import {
 import GlobalApi from "../_utils/GlobalApi";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function Header() {
   const [categoryList, setCategoryList] = useState([]);
+  const isLogin = sessionStorage.getItem("jwt") ? true : false;
+  const router = useRouter();
   const getCategoryList = () => {
     GlobalApi.getCategory().then((res) => setCategoryList(res.data.data));
   };
@@ -23,6 +26,11 @@ function Header() {
   useEffect(() => {
     getCategoryList();
   }, []);
+
+  const onSignOut = () => {
+    sessionStorage.clear();
+    router.push("/sign-in");
+  };
 
   return (
     <div className="p-5 shadow-sm flex justify-between">
@@ -69,7 +77,26 @@ function Header() {
         <h2 className="flex gap-2 items-center text-center text-lg">
           <ShoppingBag /> 0
         </h2>
-        <Button>Login</Button>
+        {!isLogin ? (
+          <Link href={"/sign-in"}>
+            <Button>Login</Button>
+          </Link>
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <CircleUserRound className="h-8 w-8 bg-green-100 text-primary p-1 rounded-full cursor-pointer" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>My Orders</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onSignOut()}>
+                Log Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </div>
   );

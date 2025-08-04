@@ -2,14 +2,13 @@
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 import GlobalApi from "@/app/_utils/GlobalApi";
-
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-function CreateAccountPage() {
-  const [userName, setUsername] = useState();
+
+function SignInPage() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const router = useRouter();
@@ -21,34 +20,28 @@ function CreateAccountPage() {
     }
   }, []);
 
-  const onCreateAccount = () => {
-    GlobalApi.registerUser(userName, email, password).then(
+  const onSignIn = () => {
+    GlobalApi.signIn(email, password).then(
       (res) => {
         sessionStorage.setItem("user", JSON.stringify(res.data.user));
         sessionStorage.setItem("jwt", res.data.jwt);
-        toast("Account Created Successfully");
+        toast("Login Successfully");
         router.push("/");
       },
       (e) => {
-        toast("Error while creating account.");
+        toast("Error while signing in.");
       }
     );
   };
-
   return (
     <div className="flex items-baseline justify-center my-10">
       <div className="flex flex-col items-center justify-center p-10 bg-slate-100 border border-gray-200">
         <Image src="/logo.png" alt="logo" width={200} height={200} />
-        <h2 className="font-bold text-3xl">Create an Account</h2>
+        <h2 className="font-bold text-3xl">Sign In to your Account</h2>
         <p className="text-gray-500">
-          Enter your Email and Password to Create an account
+          Enter your Email and Password to Sign In
         </p>
         <div className="w-full flex flex-col gap-5 mt-7">
-          <Input
-            className={"bg-slate-50"}
-            placeholder="Username"
-            onChange={(e) => setUsername(e.target.value)}
-          />
           <Input
             className={"bg-slate-50"}
             placeholder="youremail@example.com"
@@ -60,16 +53,13 @@ function CreateAccountPage() {
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button
-            disabled={!userName || !email || !password}
-            onClick={() => onCreateAccount()}
-          >
-            Create an Account
+          <Button disabled={!email || !password} onClick={() => onSignIn()}>
+            Sign In
           </Button>
           <p>
-            Already have an account?{" "}
-            <Link href="/sign-in" className="text-primary">
-              Click here to Sign In
+            Don't have an account?{" "}
+            <Link href="/create-account" className="text-primary">
+              Click here to Register
             </Link>
           </p>
         </div>
@@ -78,4 +68,4 @@ function CreateAccountPage() {
   );
 }
 
-export default CreateAccountPage;
+export default SignInPage;
