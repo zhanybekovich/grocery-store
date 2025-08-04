@@ -23,10 +23,18 @@ const getProductsByCategory = (category) =>
     .get("/products?filters[categories][name][$in]=" + category + "&populate=*")
     .then((res) => res.data.data);
 
+const registerUser = (username, email, password) =>
+  axiosClient.post("/auth/local/register", {
+    username,
+    email,
+    password,
+  });
+
 export default {
   getCategory,
   getSliders,
   getCategoryList,
   getAllProducts,
   getProductsByCategory,
+  registerUser,
 };
